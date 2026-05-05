@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// GET /api/products/seller/mine  — must be BEFORE /:id
+
 router.get("/seller/mine", authMW, async (req, res) => {
   const products = await req.db.all_(
     "SELECT * FROM products WHERE seller_id = ? ORDER BY created_at DESC",
@@ -51,10 +51,11 @@ router.post("/", authMW, upload.single("image"), async (req, res) => {
     "INSERT INTO products (title, description, price, category, image_url, seller_id, stock) VALUES (?, ?, ?, ?, ?, ?, ?)",
     [title, description, parseFloat(price), category, image_url, req.user.id, parseInt(stock) || 1]
   );
-  res.json({ id: result.lastID, message: "Product listed" });
+ 
+res.json({ id: result.lastInsertRowid, message: "Product listed" });
 });
 
-// DELETE /api/products/:id
+
 router.delete("/:id", authMW, async (req, res) => {
   const product = await req.db.get_("SELECT * FROM products WHERE id = ?", [req.params.id]);
   if (!product) return res.status(404).json({ error: "Not found" });
