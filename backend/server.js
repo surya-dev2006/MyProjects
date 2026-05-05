@@ -58,8 +58,7 @@ db.serialize(() => {
     FOREIGN KEY (product_id) REFERENCES products(id)
   )`);
 });
-
-app.use(cors());
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
